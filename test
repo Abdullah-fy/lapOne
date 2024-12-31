@@ -1,1 +1,178 @@
-test
+#include <iostream>
+#include <string.h>
+
+using namespace std;
+
+class Complex{
+    int real;
+    int img;
+public:
+    Complex(){
+        real=img=0;
+    }
+    Complex(int _real){
+        real = _real;
+        img = 0;
+    }
+    Complex(int _real, int _img){
+        real = _real;
+        img = _img;
+    }
+    int setReal(int _real){
+        real = _real;
+    }
+    int setImg(int _img){
+        img = _img;
+    }
+
+    int getReal(){
+        return real;
+    }
+    int getImg(){
+        return img;
+    }
+
+    // the first parameter is this(the caller)
+    Complex operator+(Complex c){       // if we wrote the function outside Complex class there is no this, so we have to send 2 parameter
+        Complex res;
+        res.real = real + c.real;
+        res.img = img + c.img;
+        //Complex res(c.real+real, c.img+img);
+        return res;
+    }
+
+     Complex operator+(int d){       // if we wrote the function outside Complex class there is no this, so we have to send 2 parameter
+        Complex res;
+        res.real = real + d;
+        res.img = img;
+        //Complex res(d+real, img);
+        return res;
+    }
+
+    int operator==(Complex c){ //this is binary operator so it will return 0 or 1, so it will be from type int
+       return c.real==real&&c.img==img;  // if it equal it will return 1 if not 0
+        /*if(c.real==real&&c.img==img){
+            return 1;
+        }else{
+            return 0;
+        }*/
+    }
+
+    int operator!=(Complex c){
+       return !(*this==c);      // will call == function and reverse the result
+    }
+
+    Complex operator+=(Complex c){              // CAN WE WRITE THIS FUNCTION LIKE + FUNCTION AND RETURN RES??
+        real = real+c.real;
+        img = img + c.img;
+        return *this;      //so we can save the value
+    }
+
+    /*operator int(){ // implict cast Complex to int
+        return real;
+    }*/
+
+    explicit operator int(){
+        return real;
+    }
+
+    Complex operator++(){ // prefix
+        real=real+1;
+        return *this;
+    }
+    Complex operator++(int){ // postfix
+        Complex res=*this;  // because i want the value before increasing it
+        real=real+1;
+        return res;
+    }
+
+    int& operator[](char *n){           //means that the operator returns a reference to the original value, allowing you to modify it directly.
+        if(strcmp(n, "real") == 0){
+            return real;
+        }else if(strcmp(n, "img") == 0){
+            return img;
+        }else{
+            cout<<"unvalid";
+        }
+    }
+
+
+    void print(){
+        if(real > 0 && img > 0){
+            cout<<real<<"+"<<img<<"j"<<endl;
+        }else if(real > 0 && img <= 0){
+            cout<<real<<endl;
+        }else if(real <= 0 && img > 0){
+            cout<<img<<"j"<<endl;
+        }else{
+            cout << real << img<<"j";
+        }
+    }
+
+};
+/*
+ Complex operator+(Complex c1,Complex c2){       // stand alone function has no this
+        Complex res;
+        res.setReal( c1.getReal() + c2.getReal());
+        res.setImg (c1.getImg() + c2.getImg());
+        return res;
+    }
+*/
+
+// c1=4+c4;  == c1=4.operator(c4); the caller is the int number 4
+
+ Complex operator+(int d,Complex c2){       // stand alone function has no this
+        Complex res;                    // this function must write outside Complex class because the caller here is the int, and you can not access int class
+        res.setReal(d+ c2.getReal());
+        res.setImg (c2.getImg());
+        return res;
+
+        // return c+x;      will make it call other func in the class
+    }
+
+// you do not need to make overload for = operator should made AS MEMBER FUNCTION so it can change in caller object
+
+int main()
+{
+    Complex c1(10,20), c2(30,40), c8(20,30), c9(10,20);
+    Complex c3,c4,c5,c6,c7;
+    c3=c1+c2;
+    c3.print();
+
+    c4=c1+4;
+    c4.print();
+
+    c5=c1+c2+4;
+    c5.print();
+
+    c6=4+c1;
+    c6.print();
+
+    cout<< (c1==c2)<< endl;
+    cout<< (c1!=c2)<< endl;
+
+    c7=10; // casting int to complex      // handled by constructor
+    c7.print();
+
+
+    /*int x;
+    x=c8;       // implict cast Complex
+    cout<<x<<endl;*/
+
+    int x;
+    x=(int)c8;
+    cout<<x<<endl;
+
+    c9++;   // postfix
+    c9.print();
+    ++c9; //prefix
+    c9.print();
+
+    cout << c9["img"]<<endl;
+    cout << c9["real"]<<endl;
+
+    c9["real"]=90;
+    c9.print();
+
+    return 0;
+}
